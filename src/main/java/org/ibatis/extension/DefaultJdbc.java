@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -38,7 +39,7 @@ final class DefaultJdbc implements Jdbc {
                 if (method.isAnnotationPresent(Insert.class) || method.isAnnotationPresent(Delete.class) || method.isAnnotationPresent(Update.class)) {
                     session.rollback();
                 }
-                throw ex;
+                throw ExceptionUtil.unwrapThrowable(ex);
             } finally {
                 session.close();
             }

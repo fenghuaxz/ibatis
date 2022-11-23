@@ -5,5 +5,5 @@ import org.ibatis.extension.annotations.Bind;
 
 interface TableGenerator {
 
-    void generate(Driver driver, Bind bind, Class<?> mapper, SqlSession session);
+    void generate(Bind bind, Class<?> mapper, SqlSession session);
 }

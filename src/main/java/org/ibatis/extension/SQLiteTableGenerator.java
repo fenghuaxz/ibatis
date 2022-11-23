@@ -3,6 +3,7 @@ package org.ibatis.extension;
 import org.apache.ibatis.session.SqlSession;
 import org.ibatis.extension.annotations.Bind;
 import org.ibatis.extension.annotations.Id;
+import org.ibatis.extension.annotations.Nullable;
 import org.ibatis.extension.annotations.TypeMapping;
 
 import java.lang.reflect.Field;
@@ -13,13 +14,15 @@ import java.sql.SQLException;
 
 @SuppressWarnings("DuplicatedCode")
 final class SQLiteTableGenerator implements TableGenerator {
+
     @Override
-    public void generate(Driver driver, Bind bind, Class<?> mapper, SqlSession session) {
-        String tableName = driver.tableName(mapper);
+    @SuppressWarnings("SqlDialectInspection")
+    public void generate(Bind bind, Class<?> mapper, SqlSession session) {
+        String tableName = Utils.toTableName(mapper);
 
         StringBuilder sql = new StringBuilder();
         sql.append("CREATE TABLE IF NOT EXISTS ");
-        sql.append(tableName);
+        sql.append(Utils.escape(tableName));
         sql.append("(");
 
         String temp = "";
@@ -38,12 +41,15 @@ final class SQLiteTableGenerator implements TableGenerator {
                 jdbcType = TypeMapping.Constant.getMapping(field.getType());
             }
 
+            String columnName = Utils.toColumnName(field);
+
             if (id == null && (id = field.getAnnotation(Id.class)) != null) {
-                pk = field.getName();
-                temp = field.getName() + " INTEGER PRIMARY KEY AUTOINCREMENT," + temp;
+                pk = columnName;
+                temp = Utils.escape(columnName) + " INTEGER PRIMARY KEY AUTOINCREMENT," + temp;
                 continue;
             }
-            temp += field.getName() + " " + jdbcType + " NULL,";
+            boolean isNullable = field.getAnnotation(Nullable.class) != null;
+            temp += Utils.escape(columnName) + " " + jdbcType + (isNullable ? " NULL," : " NOT NULL,");
         }
 
         sql.append(temp, 0, temp.length() - 1).append(");");

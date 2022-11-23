@@ -13,6 +13,6 @@ public interface UserMapper {
     @Update(Jdbc.OMIT)
     void update(User user);
 
-    @Select("select*from @table where account=#{account}")
+    @Select("select*from @table where account=#{account} @between(#{start},#{end})")
     User get(@Param("account") String account);
 }
