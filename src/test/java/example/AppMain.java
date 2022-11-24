@@ -1,16 +1,16 @@
 package example;
 
 import org.ibatis.extension.Jdbc;
-import org.ibatis.extension.JdbcBuilder;
 
 public class AppMain {
 
     public static void main(String[] args) {
 
-        Jdbc jdbc = new JdbcBuilder()
+        Jdbc jdbc = new Jdbc.Builder()
                 .url("mysql://localhost:3306/test")
                 .auth("root", "root")
                 .build();
+
 
 
 
