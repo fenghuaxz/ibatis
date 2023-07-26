@@ -1,17 +1,18 @@
 package example;
 
-import org.ibatis.extension.Jdbc;
+
+import org.ibatis.extension.SQL;
+
+import java.util.UUID;
 
 public class AppMain {
 
     public static void main(String[] args) {
 
-        Jdbc jdbc = new Jdbc.Builder()
-                .url("mysql://localhost:3306/test")
-                .auth("root", "root")
+        SQL sql = new SQL.Builder()
+                .url("mysql://localhost:3306/script")
+                .auth("root", "Loveyi8023")
                 .build();
-
-
 
 
 //        TestMapper testMapper = jdbc.getMapper(TestMapper.class);
@@ -22,7 +23,7 @@ public class AppMain {
 //
 //        System.out.println(testMapper.get("1"));
 
-        LogMapper logMapper = jdbc.getMapper(LogMapper.class);
+        LogMapper logMapper = sql.getMapper(LogMapper.class);
 
 //        for (int i = 0; i < 5; i++) {
 //            Log log = new Log();
@@ -31,12 +32,12 @@ public class AppMain {
 //            logMapper.add(log);
 //        }
 
-        Log[] logs = logMapper.get(0);
-        System.out.println("结果:" + logs.length);
+        UserMapper mapper = sql.getMapper(UserMapper.class);
 
-        for (Log log : logs) {
-            System.out.println("内容:" + log);
-        }
+        User user = mapper.findByAccount("fenghuaxz");
+        user.sid = UUID.randomUUID().toString();
 
+        mapper.update(user);
+        System.out.println(user);
     }
 }

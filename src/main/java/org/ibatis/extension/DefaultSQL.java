@@ -10,11 +10,11 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Proxy;
 
-final class DefaultJdbc implements Jdbc {
+final class DefaultSQL implements SQL {
 
     private final SqlSessionFactory sqlSessionFactory;
 
-    DefaultJdbc(SqlSessionFactory sqlSessionFactory) {
+    DefaultSQL(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
 

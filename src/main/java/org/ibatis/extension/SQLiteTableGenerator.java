@@ -3,7 +3,7 @@ package org.ibatis.extension;
 import org.apache.ibatis.session.SqlSession;
 import org.ibatis.extension.annotations.Bind;
 import org.ibatis.extension.annotations.Id;
-import org.ibatis.extension.annotations.Nullable;
+import org.ibatis.extension.annotations.NotNull;
 import org.ibatis.extension.annotations.TypeMapping;
 
 import java.lang.reflect.Field;
@@ -18,11 +18,11 @@ final class SQLiteTableGenerator implements TableGenerator {
     @Override
     @SuppressWarnings("SqlDialectInspection")
     public void generate(Bind bind, Class<?> mapper, SqlSession session) {
-        String tableName = Utils.toTableName(mapper);
+        String tableName = Util.toTableName(mapper);
 
         StringBuilder sql = new StringBuilder();
         sql.append("CREATE TABLE IF NOT EXISTS ");
-        sql.append(Utils.escape(tableName));
+        sql.append(Util.escape(tableName));
         sql.append("(");
 
         String temp = "";
@@ -41,15 +41,15 @@ final class SQLiteTableGenerator implements TableGenerator {
                 jdbcType = TypeMapping.Constant.getMapping(field.getType());
             }
 
-            String columnName = Utils.toColumnName(field);
+            String columnName = Util.toColumnName(field);
 
             if (id == null && (id = field.getAnnotation(Id.class)) != null) {
                 pk = columnName;
-                temp = Utils.escape(columnName) + " INTEGER PRIMARY KEY AUTOINCREMENT," + temp;
+                temp = Util.escape(columnName) + " INTEGER PRIMARY KEY AUTOINCREMENT," + temp;
                 continue;
             }
-            boolean isNullable = field.getAnnotation(Nullable.class) != null;
-            temp += Utils.escape(columnName) + " " + jdbcType + (isNullable ? " NULL," : " NOT NULL,");
+            boolean isNotNull = field.getAnnotation(NotNull.class) != null;
+            temp += Util.escape(columnName) + " " + jdbcType + (isNotNull ? " NOT NULL," : " NULL,");
         }
 
         sql.append(temp, 0, temp.length() - 1).append(");");

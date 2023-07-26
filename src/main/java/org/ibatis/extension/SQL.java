@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.TimeZone;
 
-public interface Jdbc {
+public interface SQL {
 
     String OMIT = "@omit";
 
@@ -39,10 +39,9 @@ public interface Jdbc {
                 driver = Driver.MYSQL;
             else if (tempUrl.startsWith("sqlite:"))
                 driver = Driver.SQLITE;
-            else {
+            else  {
                 throw new UnsupportedOperationException("Must be prefixed with 'mysql:' or 'sqlite:'");
             }
-
             this.url = "jdbc:".concat(tempUrl);
             return this;
         }
@@ -58,11 +57,11 @@ public interface Jdbc {
             return this;
         }
 
-        public Jdbc build() {
+        public SQL build() {
             return build(null);
         }
 
-        public Jdbc build(Configuration config) {
+        public SQL build(Configuration config) {
             if (config == null) {
                 config = new Configuration();
             }
@@ -75,7 +74,7 @@ public interface Jdbc {
                 Field field = Configuration.class.getDeclaredField("mapperRegistry");
                 field.setAccessible(true);
                 field.set(config, new DefaultMapperRegistry(config, this.driver));
-                return new DefaultJdbc(new SqlSessionFactoryBuilder().build(config));
+                return new DefaultSQL(new SqlSessionFactoryBuilder().build(config));
             } catch (Exception e) {
                 throw new Error("Failed to set mapperRegistry.", e);
             }
